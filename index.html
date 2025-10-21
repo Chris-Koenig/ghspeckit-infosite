@@ -272,6 +272,167 @@
             fill: #0077b5;
         }
 
+        /* Topic Section */
+        .topic-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 5rem 2rem;
+        }
+
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .topic-card {
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid #0077b5;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .topic-card h3 {
+            font-size: 1.4rem;
+            color: #1a1a2e;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+
+        .topic-card p {
+            color: #555;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .topic-conclusion {
+            background: rgba(79, 195, 247, 0.1);
+            padding: 2.5rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid rgba(79, 195, 247, 0.2);
+        }
+
+        .topic-conclusion p {
+            font-size: 1.2rem;
+            color: #1a1a2e;
+            line-height: 1.8;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        /* Why SpecKit Now Section */
+        .why-speckit-section {
+            background: #ffffff;
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .why-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-title-large {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            line-height: 1.2;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title-large::after {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: #4fc3f7;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .why-header:hover .section-title-large::after {
+            opacity: 1;
+        }
+
+        .why-content-blocks {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .why-block {
+            margin-bottom: 2rem;
+            padding: 0;
+            background: none;
+            border: none;
+        }
+
+        .why-block-final {
+            margin-top: 3rem;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            border-left: 5px solid #4fc3f7;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .why-text {
+            font-size: 1.25rem;
+            line-height: 1.8;
+            color: #333;
+            margin: 0;
+            font-weight: 400;
+            text-align: center;
+        }
+
+        .why-text-final {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #1a1a2e;
+            margin: 0;
+            text-align: center;
+        }
+
+        .why-text-final strong {
+            color: #0077b5;
+            font-weight: 700;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .section-title-large {
+                font-size: 2.2rem;
+            }
+            
+            .why-text {
+                font-size: 1.1rem;
+            }
+            
+            .why-text-final {
+                font-size: 1.2rem;
+            }
+        }
+
         /* Schedule Section */
         .schedule {
             background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
@@ -480,6 +641,39 @@
                     <p>
                         <strong>GitHub SpecKit in Depth</strong><br>
                         Dive deep into GitHub's SpecKit, explore its capabilities, learn best practices, and discover how to leverage it for your development projects.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why SpecKit Now Section -->
+    <section class="why-speckit-section">
+        <div class="container">
+            <div class="why-header">
+                <h2 class="section-title-large">Why SpecKit Now</h2>
+            </div>
+            
+            <div class="why-content-blocks">
+                <div class="why-block">
+                    <p class="why-text">
+                        Developers thrive when they can think, build, and iterate without friction.
+                        Spec Kit removes the guesswork by giving AI agents and humans the same context.
+                        No more reverse-engineering intentions from scattered commits and chat threads.
+                    </p>
+                </div>
+
+                <div class="why-block">
+                    <p class="why-text">
+                        Specs become part of the workflow — versioned, reviewable, and always close to code.
+                        Developers can explore new ideas safely, knowing the "why" behind every decision is documented.
+                        Every PR, branch, and experiment stays anchored to an evolving source of truth.
+                    </p>
+                </div>
+
+                <div class="why-block-final">
+                    <p class="why-text-final">
+                        <strong>Spec Kit turns context into a developer superpower — a clear, shared, and adaptable foundation that makes building with AI not just faster, but genuinely smarter.</strong>
                     </p>
                 </div>
             </div>
