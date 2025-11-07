@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub SpecKit in Depth. Build smarter. Faster. Together.</title>
+    <title>AI Self-Assessment</title>
     <style>
         * {
             margin: 0;
@@ -12,959 +12,867 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: #0a0a0a;
-            overflow-x: hidden;
-        }
-
-        /* Navigation */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 1rem 0;
-            transition: all 0.3s ease;
-        }
-
-        .navbar.scrolled {
-            background: rgba(10, 10, 10, 0.98);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-        }
-
-        .nav-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            text-decoration: none;
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-            margin: 0;
-            padding: 0;
-        }
-
-        .nav-item {
-            margin: 0;
-        }
-
-        .nav-link {
-            color: #e0e0e0;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: #4fc3f7;
-            background: rgba(79, 195, 247, 0.1);
-        }
-
-        .nav-toggle {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 3px;
-        }
-
-        .nav-toggle span {
-            width: 25px;
-            height: 3px;
-            background: #ffffff;
-            transition: all 0.3s ease;
-        }
-
-        .nav-toggle.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .nav-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .nav-toggle.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -6px);
-        }
-
-        /* Hero Section */
-        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            background: 
-                linear-gradient(135deg, rgba(26, 26, 46, 0.7) 0%, rgba(22, 33, 62, 0.8) 50%, rgba(15, 52, 96, 0.7) 100%),
-                url('isol-background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 2rem;
-            padding-top: 5rem; /* Account for fixed navbar */
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.1" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.3;
-        }
-
-        /* Alternative: If you want to use an actual image file instead */
-        .hero.with-image {
-            background: 
-                linear-gradient(135deg, rgba(26, 26, 46, 0.75) 0%, rgba(22, 33, 62, 0.8) 50%, rgba(15, 52, 96, 0.75) 100%),
-                url('conference-audience.jpg'); /* Replace with your actual image path */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
-        .hero-content {
-            text-align: center;
-            z-index: 2;
-            max-width: 800px;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 1rem;
-            opacity: 0;
-            transform: translateY(50px);
-            animation: flyIn 1.5s ease-out 0.5s forwards;
-        }
-
-        .hero h2 {
-            font-size: 1.5rem;
-            color: #e0e0e0;
-            margin-bottom: 2rem;
-            opacity: 0;
-            animation: fadeInUp 1s ease-out 1s forwards;
-        }
-
-        .registration-buttons {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 3rem;
-            opacity: 0;
-            animation: fadeInUp 1s ease-out 1.5s forwards;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 1rem 2rem;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            min-width: 200px;
-            text-align: center;
-        }
-
-        .btn-linkedin {
-            background: #0077b5;
-            color: white;
-            display: none
-        }
-
-        .btn-linkedin:hover {
-            background: #005885;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 119, 181, 0.4);
-        }
-
-        .btn-meetup {
-            background: #ed1c40;
-            color: white;
-            display: none
-        }
-
-        .btn-meetup:hover {
-            background: #c4142f;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(237, 28, 64, 0.4);
-        }
-
-        /* Info Section */
-        .info-section {
-            background: #ffffff;
-            padding: 5rem 2rem;
+            padding: 2rem 1rem;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 960px;
             margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
 
-        .section-title {
-            font-size: 2.5rem;
-            color: #1a1a2e;
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
             text-align: center;
-            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
             font-weight: 700;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .info-card {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .info-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .info-card h3 {
-            font-size: 1.5rem;
-            color: #1a1a2e;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .info-card p {
-            color: #666;
-            line-height: 1.8;
-        }
-
-        .icon {
-            width: 24px;
-            height: 24px;
-            fill: #0077b5;
-        }
-
-        /* Topic Section */
-        .topic-section {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 5rem 2rem;
-        }
-
-        .topic-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .topic-card {
-            background: #ffffff;
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            border-left: 5px solid #0077b5;
-            text-align: center;
-            min-height: 220px;
-        }
-
-        .topic-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-logo {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 1rem auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #0077b5 0%, #4fc3f7 100%);
-            border-radius: 50%;
-            color: white;
-        }
-
-        .card-logo svg {
-            width: 30px;
-            height: 30px;
-        }
-
-        .topic-card h3 {
+        .intro {
             font-size: 1.1rem;
-            color: #1a1a2e;
-            margin-bottom: 1rem;
-            font-weight: 600;
-            text-align: center;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
         }
 
-        .topic-card ul {
+        main {
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        .category-title {
+            font-size: 1.4rem;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            font-weight: 600;
+        }
+
+        fieldset {
+            border: none;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        fieldset:hover {
+            background: #f1f5f9;
+        }
+
+        fieldset.error {
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+        }
+
+        legend {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1.05rem;
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .radio-option:hover {
+            background: white;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 0.75rem;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .radio-option input[type="radio"]:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            user-select: none;
+            flex: 1;
+        }
+
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .warning.show {
+            display: block;
+        }
+
+        .warning-text {
+            color: #92400e;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            display: block;
+            margin: 2rem auto;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:focus {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        #results {
+            display: none;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #results.show {
+            display: block;
+        }
+
+        .result-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge.level-1 {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge.level-2 {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge.level-3 {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge.level-4 {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .result-explanation {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #475569;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+
+        .recommendations {
+            margin-top: 2rem;
+        }
+
+        .recommendations h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .recommendations ul {
             list-style: none;
             padding: 0;
-            margin: 0;
-            text-align: left;
         }
 
-        .topic-card li {
-            color: #555;
-            font-size: 0.9rem;
-            line-height: 1.6;
+        .recommendations li {
+            padding: 0.75rem 0.75rem 0.75rem 2rem;
             margin-bottom: 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
             position: relative;
-            padding-left: 1.2rem;
         }
 
-        .topic-card li::before {
-            content: '•';
-            color: #0077b5;
+        .recommendations li::before {
+            content: "→";
+            position: absolute;
+            left: 0.75rem;
+            color: #667eea;
             font-weight: bold;
-            position: absolute;
-            left: 0;
-            top: 0;
         }
 
-        .topic-conclusion {
-            background: rgba(79, 195, 247, 0.1);
-            padding: 2.5rem;
-            border-radius: 15px;
-            text-align: center;
-            border: 2px solid rgba(79, 195, 247, 0.2);
-        }
-
-        .topic-conclusion p {
-            font-size: 1.2rem;
-            color: #1a1a2e;
-            line-height: 1.8;
-            font-weight: 500;
-            margin: 0;
-        }
-
-        /* Why SpecKit Now Section */
-        .why-speckit-section {
-            background: #ffffff;
-            padding: 6rem 2rem;
-            position: relative;
-        }
-
-        .why-header {
-            text-align: center;
-            margin-bottom: 4rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .section-title-large {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #1a1a2e;
-            line-height: 1.2;
-            margin: 0;
-            position: relative;
-            display: inline-block;
-        }
-
-        .section-title-large::after {
-            content: '';
-            position: absolute;
-            right: -30px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            background: #4fc3f7;
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .why-header:hover .section-title-large::after {
-            opacity: 1;
-        }
-
-        .why-content-blocks {
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .why-block {
-            margin-bottom: 2rem;
-            padding: 0;
-            background: none;
-            border: none;
-        }
-
-        .why-block-final {
-            margin-top: 3rem;
-            padding: 2.5rem;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 15px;
-            border-left: 5px solid #4fc3f7;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .why-text {
-            font-size: 1.25rem;
-            line-height: 1.8;
-            color: #333;
-            margin: 0;
-            font-weight: 400;
-            text-align: center;
-        }
-
-        .why-text-final {
-            font-size: 1.3rem;
-            line-height: 1.8;
-            color: #1a1a2e;
-            margin: 0;
-            text-align: center;
-        }
-
-        .why-text-final strong {
-            color: #0077b5;
-            font-weight: 700;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .section-title-large {
-                font-size: 2.2rem;
-            }
-            
-            .why-text {
-                font-size: 1.1rem;
-            }
-            
-            .why-text-final {
-                font-size: 1.2rem;
-            }
-        }
-
-        /* Schedule Section */
-        .schedule {
-            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
-            color: white;
-            padding: 5rem 2rem;
-        }
-
-        .schedule-title {
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            font-weight: 700;
-        }
-
-        .schedule-item {
-            background: rgba(255, 255, 255, 0.1);
+        .category-scores {
+            margin-top: 2rem;
             padding: 1.5rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            backdrop-filter: blur(10px);
+            background: #f8fafc;
+            border-radius: 8px;
         }
 
-        .schedule-time {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #4fc3f7;
-            min-width: 120px;
-        }
-
-        .schedule-event {
+        .category-scores h3 {
             font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #1e293b;
         }
 
-        /* Footer */
-        .footer {
-            background: #0a0a0a;
-            color: #999;
-            text-align: center;
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .score-label {
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .score-value {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        footer {
             padding: 2rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            border-top: 1px solid #e2e8f0;
         }
 
-        /* Animations */
-        @keyframes flyIn {
-            0% {
-                opacity: 0;
-                transform: translateY(50px) scale(0.9);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        @keyframes fadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Tablet responsive */
-        @media (max-width: 1024px) {
-            .info-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 2rem;
-            }
-            
-            .topic-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 2rem;
-            }
-        }
-
-        /* Responsive Design */
         @media (max-width: 768px) {
-            .info-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .topic-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .nav-menu {
-                position: fixed;
-                top: 70px;
-                left: 0;
-                right: 0;
-                background: rgba(10, 10, 10, 0.98);
-                flex-direction: column;
-                align-items: center;
-                padding: 2rem 0;
-                transform: translateY(-100%);
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.3s ease;
+            body {
+                padding: 1rem 0.5rem;
             }
 
-            .nav-menu.active {
-                transform: translateY(0);
-                opacity: 1;
-                visibility: visible;
+            h1 {
+                font-size: 2rem;
             }
 
-            .nav-toggle {
-                display: flex;
+            .intro {
+                font-size: 1rem;
             }
 
-            .hero h1 {
-                font-size: 2.5rem;
+            header {
+                padding: 2rem 1rem;
             }
 
-            .hero h2 {
-                font-size: 1.2rem;
+            main {
+                padding: 1rem;
             }
 
-            .registration-buttons {
-                flex-direction: column;
-                align-items: center;
+            fieldset {
+                padding: 1rem;
             }
 
-            .schedule-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
+            .btn-primary {
+                padding: 0.875rem 2rem;
+                font-size: 1rem;
             }
 
-            .schedule-time {
-                min-width: auto;
+            .result-title {
+                font-size: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-        <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="#home" class="nav-logo">#1 Zürich AI Developer Community</a>
-            <ul class="nav-menu" id="nav-menu">
-                <li class="nav-item">
-                    <a href="#home" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#details" class="nav-link">Details</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#schedule" class="nav-link">Schedule</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#register" class="nav-link">Register</a>
-                </li>
-            </ul>
-            <div class="nav-toggle" id="nav-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
+    <div class="container">
+        <header>
+            <h1>AI Self-Assessment</h1>
+            <p class="intro">We will ask a few questions to help you identify the best path toward your ideal AI adoption. This assessment takes about 5-10 minutes and will provide personalized recommendations based on your organization's AI maturity.</p>
+        </header>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1 id="main-title">GitHub SpecKit in Depth</h1>
-            <h2>Build smarter. Faster. Together.</h2>
-            <h2>Mid January 2026 - keep you posted! </h2>
-
-            <h3>Don't just read about it, use it! Join Zürichs #1 AI driven development community and learn from top experts about the future of coding.</h3>
-            
-            <div class="registration-buttons" id="register" >
-                <a href="https://www.linkedin.com/events/" class="btn btn-linkedin" target="_blank">
-                    Save your seat on LinkedIn
-                </a>
-                <a href="https://www.meetup.com/" class="btn btn-meetup" target="_blank">
-                    Save your seat on Meetup
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Info Section -->
-    <section class="info-section" id="details">
-        <div class="container">
-            <h2 class="section-title">Event Essentials</h2>
-            
-            <div class="info-grid">
-                <div class="info-card">
-                    <h3>
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
-                        </svg>
-                        Date & Time
-                    </h3>
-                    <p>
-                        <strong>Thursday, November 21, 2025</strong><br>
-                        4:30 PM - 6:00 PM CET<br>
-                        Pizza & Beer until 7:00 PM
-                    </p>
-                </div>
-
-                <div class="info-card">
-                    <h3>
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                        </svg>
-                        Location
-                    </h3>
-                    <p>
-                        <strong>isolutions ag</strong><br>
-                        The Circle 38, 9th Floor<br>
-                        8058 Zürich Airport<br>
-                        Switzerland
-                    </p>
-                </div>
-
-                <div class="info-card">
-                    <h3>
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                        Registration
-                    </h3>
-                    <p>
-                        <strong>Free Event</strong><br>
-                        Register on LinkedIn or Meetup<br>
-                        Limited to 30 participants<br>
-                        RSVP required
-                    </p>
-                </div>
-
-                <div class="info-card">
-                    <h3>
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zM5 8h14V6H5v2zm0 11V10h14v9H5z"/>
-                        </svg>
-                        What's Included
-                    </h3>
-                    <p>
-                        <strong>Technical Session</strong><br>
-                        Hands-on demos & live coding<br>
-                        Pizza & drinks included<br>
-                        Networking opportunity
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Event Cards Section -->
-    <section class="topic-section">
-        <div class="container">
-            <h2 class="section-title">What You'll learn</h2>
-            
-            <div class="topic-grid">
-                <div class="topic-card">
-                    <div class="card-logo">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                    </div>
-                    <h3>SpecKit Architecture</h3>
-                    <ul>
-                        <li>Core components overview</li>
-                        <li>Integration patterns</li>
-                        <li>Technical foundations</li>
-                    </ul>
-                </div>
-
-                <div class="topic-card">
-                    <div class="card-logo">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-                        </svg>
-                    </div>
-                    <h3>AI-Powered Development</h3>
-                    <ul>
-                        <li>Human-AI collaboration</li>
-                        <li>Context preservation</li>
-                        <li>Smart automation</li>
-                    </ul>
-                </div>
-
-                <div class="topic-card">
-                    <div class="card-logo">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                        </svg>
-                    </div>
-                    <h3>Best Practices</h3>
-                    <ul>
-                        <li>Workflow optimization</li>
-                        <li>Team collaboration</li>
-                        <li>Version control</li>
-                    </ul>
-                </div>
-
-                <div class="topic-card">
-                    <div class="card-logo">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.5 6L12 10.5 8.5 8 12 5.5 15.5 8zM8.5 16L12 13.5 15.5 16 12 18.5 8.5 16z"/>
-                        </svg>
-                    </div>
-                    <h3>Hands-On Labs</h3>
-                    <ul>
-                        <li>Live coding sessions</li>
-                        <li>Real-world examples</li>
-                        <li>Starter templates</li>
-                    </ul>
-                </div>
+        <main>
+            <div class="warning" id="warning" role="alert">
+                <p class="warning-text">Please answer all questions before finishing the assessment.</p>
             </div>
 
-            <div class="topic-conclusion">
-                <p>
-                    Join us for an evening of deep technical insights, practical learning, and great networking with fellow developers passionate about modern development tools and practices.
-                </p>
-            </div>
-        </div>
-    </section>
+            <form id="assessmentForm">
+                <div id="questionsContainer"></div>
+                
+                <button type="submit" class="btn-primary">Finish Assessment</button>
+            </form>
 
-    <!-- Why SpecKit Now Section -->
-    <section class="why-speckit-section">
-        <div class="container">
-            <div class="why-header">
-                <h2 class="section-title-large">Why SpecKit Now</h2>
-            </div>
-            
-            <div class="why-content-blocks">
-                <div class="why-block">
-                    <p class="why-text">
-                        Developers thrive when they can think, build, and iterate without friction.
-                        Spec Kit removes the guesswork by giving AI agents and humans the same context.
-                        No more reverse-engineering intentions from scattered commits and chat threads.
-                    </p>
-                </div>
+            <div id="results" aria-live="polite"></div>
+        </main>
 
-                <div class="why-block">
-                    <p class="why-text">
-                        Specs become part of the workflow — versioned, reviewable, and always close to code.
-                        Developers can explore new ideas safely, knowing the "why" behind every decision is documented.
-                        Every PR, branch, and experiment stays anchored to an evolving source of truth.
-                    </p>
-                </div>
-
-                <div class="why-block-final">
-                    <p class="why-text-final">
-                        <strong>Spec Kit turns context into a developer superpower — a clear, shared, and adaptable foundation that makes building with AI not just faster, but genuinely smarter.</strong>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Schedule Section -->
-    <section class="schedule" id="schedule">
-        <div class="container">
-            <h2 class="schedule-title">Event Schedule</h2>
-            
-            <div class="schedule-item">
-                <div class="schedule-time">16:30</div>
-                <div class="schedule-event">🚪 Door Opening & Welcome</div>
-            </div>
-            
-            <div class="schedule-item">
-                <div class="schedule-time">16:45</div>
-                <div class="schedule-event">🎯 Event Starts Sharp - GitHub SpecKit Deep Dive</div>
-            </div>
-            
-            <div class="schedule-item">
-                <div class="schedule-time">18:00</div>
-                <div class="schedule-event">🍕 Event Ends - Pizza & Beer Networking</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 GitHub SpecKit Meetup. Pizza and beer included! 🍕🍺</p>
-        </div>
-    </footer>
+        <footer>
+            <p>This assessment provides indicative guidance and is not a substitute for professional consulting.</p>
+        </footer>
+    </div>
 
     <script>
-        // Enhanced title animation
-        document.addEventListener('DOMContentLoaded', function() {
-            const title = document.getElementById('main-title');
-            
-            // Split text into individual characters for more dramatic effect
-            const text = title.textContent;
-            title.innerHTML = '';
-            
-            text.split('').forEach((char, index) => {
-                const span = document.createElement('span');
-                span.textContent = char === ' ' ? '\u00A0' : char;
-                span.style.display = 'inline-block';
-                span.style.opacity = '0';
-                span.style.transform = 'translateY(50px) rotateX(90deg)';
-                span.style.animation = `charFlyIn 0.1s ease-out ${0.5 + index * 0.05}s forwards`;
-                title.appendChild(span);
-            });
-            
-            // Add dynamic style for character animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes charFlyIn {
-                    0% {
-                        opacity: 0;
-                        transform: translateY(50px) rotateX(90deg);
-                    }
-                    50% {
-                        opacity: 0.5;
-                        transform: translateY(-10px) rotateX(45deg);
-                    }
-                    100% {
-                        opacity: 1;
-                        transform: translateY(0) rotateX(0deg);
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        });
+        // Question scales
+        const SCALE_A = [
+            { label: 'Not at all', value: 0 },
+            { label: 'Planned or experimental', value: 1 },
+            { label: 'Partially', value: 2 },
+            { label: 'Fully established', value: 3 }
+        ];
 
-        // Mobile navigation toggle
-        const navToggle = document.getElementById('nav-toggle');
-        const navMenu = document.getElementById('nav-menu');
-        const navbar = document.getElementById('navbar');
+        const SCALE_B = [
+            { label: 'Not at all', value: 0 },
+            { label: 'Planned or experimental', value: 1 },
+            { label: 'Partially or in some areas', value: 2 },
+            { label: 'Fully established or widely used', value: 3 }
+        ];
 
-        navToggle.addEventListener('click', function() {
-            navToggle.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
+        // Questions catalog
+        const QUESTIONS = [
+            // Strategy and maturity (Q1-Q3)
+            { 
+                id: 'strategy', 
+                category: 'Strategy and Maturity', 
+                text: 'How much is AI part of your corporate strategy?', 
+                scale: 'A',
+                categoryGroup: 'strategy'
+            },
+            { 
+                id: 'usage', 
+                category: 'Strategy and Maturity', 
+                text: 'How is AI currently used in your organization?', 
+                scale: 'B',
+                categoryGroup: 'strategy'
+            },
+            { 
+                id: 'sponsorship', 
+                category: 'Strategy and Maturity', 
+                text: 'How strong is management support for AI initiatives?', 
+                scale: 'A',
+                categoryGroup: 'strategy'
+            },
 
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function() {
-                navToggle.classList.remove('active');
-                navMenu.classList.remove('active');
-            });
-        });
+            // Organization and governance (Q4-Q6)
+            { 
+                id: 'governance', 
+                category: 'Organization and Governance', 
+                text: 'Do you have formal AI governance (policies, roles, ethics)?', 
+                scale: 'A',
+                categoryGroup: 'governance'
+            },
+            { 
+                id: 'coe', 
+                category: 'Organization and Governance', 
+                text: 'Is there a central AI team or AI lead?', 
+                scale: 'A',
+                categoryGroup: 'governance'
+            },
+            { 
+                id: 'compliance', 
+                category: 'Organization and Governance', 
+                text: 'How are data security and compliance managed for AI?', 
+                scale: 'A',
+                categoryGroup: 'governance'
+            },
 
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
+            // Skills and culture (Q7-Q9)
+            { 
+                id: 'training', 
+                category: 'Skills and Culture', 
+                text: 'How well are employees trained or informed about AI?', 
+                scale: 'A',
+                categoryGroup: 'skills'
+            },
+            { 
+                id: 'culture', 
+                category: 'Skills and Culture', 
+                text: "How open is your organization's culture toward AI and automation?", 
+                scale: 'A',
+                categoryGroup: 'skills'
+            },
+            { 
+                id: 'enablement', 
+                category: 'Skills and Culture', 
+                text: 'Do you have enablement programs like AI guides or learning journeys?', 
+                scale: 'A',
+                categoryGroup: 'skills'
+            },
+
+            // Technology and use cases (Q10-Q12)
+            { 
+                id: 'usecases', 
+                category: 'Technology and Use Cases', 
+                text: 'How many AI use cases have been implemented?', 
+                scale: 'B',
+                categoryGroup: 'technology'
+            },
+            { 
+                id: 'impact', 
+                category: 'Technology and Use Cases', 
+                text: 'Do AI solutions generate measurable revenue or efficiency gains?', 
+                scale: 'A',
+                categoryGroup: 'technology'
+            },
+            { 
+                id: 'genai', 
+                category: 'Technology and Use Cases', 
+                text: 'Is generative AI (e.g., Copilot) in productive use?', 
+                scale: 'B',
+                categoryGroup: 'technology'
+            },
+
+            // Future and innovation (Q13-Q15)
+            { 
+                id: 'roadmap', 
+                category: 'Future and Innovation', 
+                text: 'Do you have an AI adoption roadmap?', 
+                scale: 'A',
+                categoryGroup: 'future'
+            },
+            { 
+                id: 'virtual_agents', 
+                category: 'Future and Innovation', 
+                text: 'Do you use virtual employees or AI agents?', 
+                scale: 'B',
+                categoryGroup: 'future'
+            },
+            { 
+                id: 'innovation', 
+                category: 'Future and Innovation', 
+                text: 'How actively do you experiment with new AI trends (e.g., Agentic AI)?', 
+                scale: 'A',
+                categoryGroup: 'future'
             }
-        });
+        ];
 
-        // Smooth scrolling for better UX
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const offsetTop = target.offsetTop - 70; // Account for fixed navbar
-                    window.scrollTo({
-                        top: offsetTop,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Add scroll-triggered animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+        // Maturity level definitions
+        const MATURITY_LEVELS = {
+            1: {
+                name: 'Starting',
+                range: [0, 10],
+                badge: 'level-1',
+                explanation: 'Your organization is at the beginning of its AI journey. AI strategy, governance, and adoption are at an early stage. This is a great starting point with significant opportunity for growth.',
+                recommendations: [
+                    'Define an AI strategy and vision aligned with business goals',
+                    'Establish AI governance framework and assign clear roles',
+                    'Build foundational data infrastructure and platform capabilities',
+                    'Provide AI tools and access to key team members',
+                    'Identify and launch 2-3 pilot use cases with clear success criteria',
+                    'Launch basic AI awareness training for all employees',
+                    'Create a change communication plan to build excitement and awareness'
+                ]
+            },
+            2: {
+                name: 'Experimenting',
+                range: [11, 20],
+                badge: 'level-2',
+                explanation: 'Your organization has started experimenting with AI through early pilots. However, governance structures and value realization processes are still limited. Focus on consolidating learnings and building sustainable practices.',
+                recommendations: [
+                    'Consolidate platform and establish technical standards',
+                    'Expand governance processes and establish clear decision-making frameworks',
+                    'Build and prioritize a use case funnel with business value assessment',
+                    'Offer targeted enablement and training programs for different roles',
+                    'Define and track success metrics and KPIs for AI initiatives',
+                    'Create internal showcases and communities of practice',
+                    'Establish a systematic approach to scale successful pilots'
+                ]
+            },
+            3: {
+                name: 'Scaling',
+                range: [21, 32],
+                badge: 'level-3',
+                explanation: 'Your organization has productive AI use cases generating measurable value. The focus now is on scaling successful initiatives, expanding reach across the organization, and building repeatable processes.',
+                recommendations: [
+                    'Expand use case portfolio across different business units',
+                    'Enable business teams through citizen development approaches',
+                    'Strengthen MLOps capabilities and monitoring infrastructure',
+                    'Implement FinOps practices to manage AI costs and optimize value',
+                    'Deploy advanced training programs and certification paths',
+                    'Automate compliance and governance processes',
+                    'Build reusable AI components and accelerators'
+                ]
+            },
+            4: {
+                name: 'Strategic Leadership',
+                range: [33, 47],
+                badge: 'level-4',
+                explanation: 'AI is strategically embedded across your organization and delivers recurring business value. Your organization is positioned as an AI leader, with mature practices and continuous innovation. Focus on maintaining leadership and exploring cutting-edge capabilities.',
+                recommendations: [
+                    'Define and execute a long-term enterprise AI roadmap',
+                    'Mature governance structures and establish a comprehensive AI Center of Excellence',
+                    'Invest in innovation programs for autonomous agents and advanced generative AI',
+                    'Implement enterprise-wide KPIs for AI performance and business impact',
+                    'Build external partnerships and ecosystem relationships',
+                    'Ensure AI regulation readiness (e.g., EU AI Act compliance)',
+                    'Establish thought leadership through publications and speaking engagements',
+                    'Create AI ethics board and responsible AI practices'
+                ]
+            }
         };
 
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+        // State management
+        let answers = {};
+
+        // Initialize the form
+        function initForm() {
+            const container = document.getElementById('questionsContainer');
+            let currentCategory = '';
+            let categorySection = null;
+
+            QUESTIONS.forEach((question, index) => {
+                // Create new category section if needed
+                if (question.category !== currentCategory) {
+                    currentCategory = question.category;
+                    categorySection = document.createElement('section');
+                    categorySection.innerHTML = `<h2 class="category-title">${currentCategory}</h2>`;
+                    container.appendChild(categorySection);
+                }
+
+                // Create fieldset for question
+                const fieldset = document.createElement('fieldset');
+                fieldset.id = `question-${question.id}`;
+                
+                const legend = document.createElement('legend');
+                legend.textContent = `${index + 1}. ${question.text}`;
+                fieldset.appendChild(legend);
+
+                const radioGroup = document.createElement('div');
+                radioGroup.className = 'radio-group';
+                radioGroup.setAttribute('role', 'radiogroup');
+                radioGroup.setAttribute('aria-labelledby', `legend-${question.id}`);
+
+                // Get appropriate scale
+                const scale = question.scale === 'A' ? SCALE_A : SCALE_B;
+
+                scale.forEach(option => {
+                    const radioOption = document.createElement('div');
+                    radioOption.className = 'radio-option';
+
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = question.id;
+                    input.value = option.value;
+                    input.id = `${question.id}-${option.value}`;
+                    input.addEventListener('change', () => handleAnswerChange(question.id, option.value));
+
+                    const label = document.createElement('label');
+                    label.htmlFor = input.id;
+                    label.textContent = option.label;
+
+                    radioOption.appendChild(input);
+                    radioOption.appendChild(label);
+                    radioGroup.appendChild(radioOption);
+                });
+
+                fieldset.appendChild(radioGroup);
+                categorySection.appendChild(fieldset);
+            });
+
+            // Load saved answers if available
+            loadSavedAnswers();
+        }
+
+        // Handle answer change
+        function handleAnswerChange(questionId, value) {
+            answers[questionId] = parseInt(value);
+            
+            // Remove error state if present
+            const fieldset = document.getElementById(`question-${questionId}`);
+            if (fieldset) {
+                fieldset.classList.remove('error');
+            }
+
+            // Save to localStorage
+            saveAnswers();
+        }
+
+        // Save answers to localStorage
+        function saveAnswers() {
+            try {
+                localStorage.setItem('ai_assessment_answers', JSON.stringify(answers));
+            } catch (e) {
+                console.warn('Could not save to localStorage:', e);
+            }
+        }
+
+        // Load saved answers from localStorage
+        function loadSavedAnswers() {
+            try {
+                const saved = localStorage.getItem('ai_assessment_answers');
+                if (saved) {
+                    answers = JSON.parse(saved);
+                    
+                    // Populate form with saved answers
+                    Object.keys(answers).forEach(questionId => {
+                        const input = document.querySelector(`input[name="${questionId}"][value="${answers[questionId]}"]`);
+                        if (input) {
+                            input.checked = true;
+                        }
+                    });
+                }
+            } catch (e) {
+                console.warn('Could not load from localStorage:', e);
+            }
+        }
+
+        // Validate form
+        function validateForm() {
+            const warning = document.getElementById('warning');
+            let isValid = true;
+            let firstError = null;
+
+            QUESTIONS.forEach(question => {
+                const fieldset = document.getElementById(`question-${question.id}`);
+                if (answers[question.id] === undefined) {
+                    isValid = false;
+                    if (fieldset) {
+                        fieldset.classList.add('error');
+                        if (!firstError) {
+                            firstError = fieldset;
+                        }
+                    }
                 }
             });
-        }, observerOptions);
 
-        // Observe elements for scroll animations
-        document.querySelectorAll('.info-card, .schedule-item').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
+            if (!isValid) {
+                warning.classList.add('show');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } else {
+                warning.classList.remove('show');
+            }
+
+            return isValid;
+        }
+
+        // Calculate scores
+        function calculateScores() {
+            // Calculate category scores
+            const categoryScores = {
+                strategy: 0,
+                governance: 0,
+                skills: 0,
+                technology: 0,
+                future: 0
+            };
+
+            QUESTIONS.forEach(question => {
+                const value = answers[question.id] || 0;
+                categoryScores[question.categoryGroup] += value;
+            });
+
+            // Calculate total base score
+            let totalScore = Object.values(categoryScores).reduce((sum, score) => sum + score, 0);
+
+            // Apply bonus logic
+            if (categoryScores.governance >= 6 && answers.compliance >= 2) {
+                totalScore += 1;
+            }
+            if (categoryScores.technology >= 6 && answers.impact >= 2) {
+                totalScore += 1;
+            }
+
+            return {
+                total: totalScore,
+                categories: categoryScores
+            };
+        }
+
+        // Determine maturity level
+        function determineMaturityLevel(scores) {
+            const { total, categories } = scores;
+
+            // Apply override rules
+            
+            // Rule 1: If usage and governance are very low, force Level 1
+            if (answers.usage <= 1 && answers.governance <= 1) {
+                return 1;
+            }
+
+            // Rule 2: If usage is good and has use cases or genAI, at least Level 3
+            if (answers.usage >= 2 && (answers.usecases >= 2 || answers.genai >= 2)) {
+                // But still check if score qualifies for Level 3
+                if (total >= 21) {
+                    // Check if all categories are high for Level 4
+                    if (Object.values(categories).every(score => score >= 7)) {
+                        return 4;
+                    }
+                    return total >= 33 ? 4 : 3;
+                }
+            }
+
+            // Rule 3: If all categories are strong, Level 4
+            if (Object.values(categories).every(score => score >= 7)) {
+                return 4;
+            }
+
+            // Standard level determination by score
+            for (let level = 4; level >= 1; level--) {
+                const levelDef = MATURITY_LEVELS[level];
+                if (total >= levelDef.range[0] && total <= levelDef.range[1]) {
+                    return level;
+                }
+            }
+
+            return 1; // Default to Level 1
+        }
+
+        // Render results
+        function renderResults(level, scores) {
+            const resultsDiv = document.getElementById('results');
+            const levelDef = MATURITY_LEVELS[level];
+
+            const html = `
+                <div class="result-card">
+                    <h2 class="result-title">Your AI Maturity Level: ${levelDef.name}</h2>
+                    <span class="badge ${levelDef.badge}">Level ${level}: ${levelDef.name}</span>
+                    
+                    <div class="result-explanation">
+                        <p>${levelDef.explanation}</p>
+                    </div>
+
+                    <div class="recommendations">
+                        <h3>Recommended Next Steps</h3>
+                        <ul>
+                            ${levelDef.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="category-scores">
+                        <h3>Category Breakdown</h3>
+                        <div class="score-item">
+                            <span class="score-label">Strategy and Maturity</span>
+                            <span class="score-value">${scores.categories.strategy} / 9</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Organization and Governance</span>
+                            <span class="score-value">${scores.categories.governance} / 9</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Skills and Culture</span>
+                            <span class="score-value">${scores.categories.skills} / 9</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Technology and Use Cases</span>
+                            <span class="score-value">${scores.categories.technology} / 9</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Future and Innovation</span>
+                            <span class="score-value">${scores.categories.future} / 9</span>
+                        </div>
+                        <div class="score-item" style="margin-top: 1rem; border-top: 2px solid #e2e8f0; padding-top: 1rem;">
+                            <span class="score-label" style="font-weight: 700;">Total Score</span>
+                            <span class="score-value" style="font-size: 1.3rem;">${scores.total} / 47</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            resultsDiv.innerHTML = html;
+            resultsDiv.classList.add('show');
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Handle form submission
+        function handleSubmit(e) {
+            e.preventDefault();
+
+            if (!validateForm()) {
+                return;
+            }
+
+            // Calculate scores and determine level
+            const scores = calculateScores();
+            const level = determineMaturityLevel(scores);
+
+            // Render results
+            renderResults(level, scores);
+        }
+
+        // Initialize form on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initForm();
+
+            const form = document.getElementById('assessmentForm');
+            form.addEventListener('submit', handleSubmit);
         });
     </script>
 </body>
