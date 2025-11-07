@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Self-Assessment</title>
+    <title>AI Self-Assessment - Evaluate Your Organization's AI Maturity</title>
     <style>
         * {
             margin: 0;
@@ -405,6 +405,7 @@
         ];
 
         // Questions catalog
+        // Note: 'category' is used for display grouping, 'categoryGroup' is used for scoring logic
         const QUESTIONS = [
             // Strategy and maturity (Q1-Q3)
             { 
@@ -668,7 +669,8 @@
             try {
                 localStorage.setItem('ai_assessment_answers', JSON.stringify(answers));
             } catch (e) {
-                console.warn('Could not save to localStorage:', e);
+                // Note: This is safe to fail silently - assessment will still work, just won't persist between sessions
+                console.warn('Could not save assessment progress. Your answers will not be saved between sessions.', e);
             }
         }
 
@@ -680,6 +682,7 @@
                     answers = JSON.parse(saved);
                     
                     // Populate form with saved answers
+                    // Note: questionId values are controlled (from QUESTIONS array), not user input, so querySelector is safe
                     Object.keys(answers).forEach(questionId => {
                         const input = document.querySelector(`input[name="${questionId}"][value="${answers[questionId]}"]`);
                         if (input) {
@@ -688,7 +691,8 @@
                     });
                 }
             } catch (e) {
-                console.warn('Could not load from localStorage:', e);
+                // Note: This is safe to fail silently - assessment will start fresh if saved data can't be loaded
+                console.warn('Could not load previously saved assessment progress. Starting fresh.', e);
             }
         }
 
@@ -760,14 +764,16 @@
         function determineMaturityLevel(scores) {
             const { total, categories } = scores;
 
-            // Apply override rules
+            // Apply override rules - these ensure results reflect actual organizational state
             
-            // Rule 1: If usage and governance are very low, force Level 1
+            // Rule 1: Organizations with minimal AI usage and no governance structure
+            // should always be considered at the starting level, regardless of future plans
             if (answers.usage <= 1 && answers.governance <= 1) {
                 return 1;
             }
 
-            // Rule 2: If usage is good and has use cases or genAI, at least Level 3
+            // Rule 2: Organizations actively using AI with implemented use cases or generative AI
+            // in production should be at least at scaling level, as they've moved beyond experimentation
             if (answers.usage >= 2 && (answers.usecases >= 2 || answers.genai >= 2)) {
                 // But still check if score qualifies for Level 3
                 if (total >= 21) {
@@ -779,7 +785,9 @@
                 }
             }
 
-            // Rule 3: If all categories are strong, Level 4
+            // Rule 3: Organizations with strong performance across ALL categories (7+/9 each)
+            // demonstrate strategic leadership regardless of total score, as balanced excellence
+            // across all dimensions is a key indicator of maturity
             if (Object.values(categories).every(score => score >= 7)) {
                 return 4;
             }
@@ -796,6 +804,8 @@
         }
 
         // Render results
+        // Note: All content (levelDef.name, explanation, recommendations) comes from the hardcoded 
+        // MATURITY_LEVELS object, not user input, so template literals are safe here
         function renderResults(level, scores) {
             const resultsDiv = document.getElementById('results');
             const levelDef = MATURITY_LEVELS[level];
