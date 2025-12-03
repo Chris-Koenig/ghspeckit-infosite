@@ -863,8 +863,123 @@
     </footer>
 
     <script>
+        // Client-side Logger
+        const Logger = {
+            levels: {
+                DEBUG: 0,
+                INFO: 1,
+                WARN: 2,
+                ERROR: 3
+            },
+            currentLevel: 1, // INFO by default
+            
+            formatMessage: function(level, message, data) {
+                const timestamp = new Date().toISOString();
+                return {
+                    timestamp,
+                    level,
+                    message,
+                    data: data || null,
+                    userAgent: navigator.userAgent,
+                    url: window.location.href
+                };
+            },
+            
+            log: function(level, message, data) {
+                if (this.levels[level] >= this.currentLevel) {
+                    const logEntry = this.formatMessage(level, message, data);
+                    
+                    switch(level) {
+                        case 'DEBUG':
+                            console.debug(`[${logEntry.timestamp}] DEBUG:`, message, data || '');
+                            break;
+                        case 'INFO':
+                            console.info(`[${logEntry.timestamp}] INFO:`, message, data || '');
+                            break;
+                        case 'WARN':
+                            console.warn(`[${logEntry.timestamp}] WARN:`, message, data || '');
+                            break;
+                        case 'ERROR':
+                            console.error(`[${logEntry.timestamp}] ERROR:`, message, data || '');
+                            break;
+                    }
+                    
+                    // Store in sessionStorage for debugging (limit to last 100 entries)
+                    try {
+                        const logs = JSON.parse(sessionStorage.getItem('appLogs') || '[]');
+                        logs.push(logEntry);
+                        if (logs.length > 100) logs.shift();
+                        sessionStorage.setItem('appLogs', JSON.stringify(logs));
+                    } catch (e) {
+                        // Avoid infinite loop - use direct console method
+                        if (level !== 'WARN') {
+                            console.warn('Failed to store log in sessionStorage:', e);
+                        }
+                    }
+                }
+            },
+            
+            debug: function(message, data) { this.log('DEBUG', message, data); },
+            info: function(message, data) { this.log('INFO', message, data); },
+            warn: function(message, data) { this.log('WARN', message, data); },
+            error: function(message, data) { this.log('ERROR', message, data); },
+            
+            getLogs: function() {
+                try {
+                    return JSON.parse(sessionStorage.getItem('appLogs') || '[]');
+                } catch (e) {
+                    console.error('Failed to retrieve logs:', e);
+                    return [];
+                }
+            },
+            
+            clearLogs: function() {
+                sessionStorage.removeItem('appLogs');
+                this.info('Logs cleared');
+            }
+        };
+        
+        // Global error handler
+        window.addEventListener('error', function(event) {
+            Logger.error('JavaScript error occurred', {
+                message: event.message,
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno,
+                error: event.error ? event.error.stack : null
+            });
+        });
+        
+        // Unhandled promise rejection handler
+        window.addEventListener('unhandledrejection', function(event) {
+            Logger.error('Unhandled promise rejection', {
+                reason: event.reason,
+                promise: event.promise
+            });
+        });
+        
+        // Page lifecycle logging
+        window.addEventListener('load', function() {
+            try {
+                // Use modern Performance API
+                const perfEntries = performance.getEntriesByType('navigation');
+                const loadTime = perfEntries.length > 0 
+                    ? Math.round(perfEntries[0].loadEventEnd - perfEntries[0].fetchStart)
+                    : 0;
+                Logger.info('Page fully loaded', { loadTime: loadTime });
+            } catch (e) {
+                Logger.info('Page fully loaded');
+            }
+        });
+        
+        window.addEventListener('beforeunload', function() {
+            Logger.info('User leaving page');
+        });
+        
         // Enhanced title animation
         document.addEventListener('DOMContentLoaded', function() {
+            Logger.info('DOM content loaded');
+            
             const title = document.getElementById('main-title');
             
             // Split text into individual characters for more dramatic effect
@@ -908,24 +1023,38 @@
         const navbar = document.getElementById('navbar');
 
         navToggle.addEventListener('click', function() {
-            navToggle.classList.toggle('active');
+            const isActive = navToggle.classList.toggle('active');
             navMenu.classList.toggle('active');
+            Logger.info('Mobile navigation toggled', { active: isActive });
         });
 
         // Close mobile menu when clicking on a link
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function() {
+            link.addEventListener('click', function(e) {
+                const target = this.getAttribute('href');
+                Logger.info('Navigation link clicked', { target: target });
                 navToggle.classList.remove('active');
                 navMenu.classList.remove('active');
             });
         });
 
         // Navbar scroll effect
+        let scrollLogged = false;
+        let scrollTimeout;
         window.addEventListener('scroll', function() {
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
+                // Throttle logging
+                if (!scrollLogged) {
+                    scrollLogged = true;
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(function() {
+                        Logger.debug('User scrolled past header');
+                    }, 100);
+                }
             } else {
                 navbar.classList.remove('scrolled');
+                scrollLogged = false;
             }
         });
 
@@ -934,12 +1063,16 @@
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
+                const targetId = this.getAttribute('href');
                 if (target) {
                     const offsetTop = target.offsetTop - 70; // Account for fixed navbar
+                    Logger.info('Smooth scroll initiated', { target: targetId, offsetTop: offsetTop });
                     window.scrollTo({
                         top: offsetTop,
                         behavior: 'smooth'
                     });
+                } else {
+                    Logger.warn('Scroll target not found', { target: targetId });
                 }
             });
         });
@@ -955,6 +1088,10 @@
                 if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
+                    Logger.debug('Element became visible', { 
+                        element: entry.target.className,
+                        intersectionRatio: entry.intersectionRatio 
+                    });
                 }
             });
         }, observerOptions);
@@ -965,6 +1102,22 @@
             el.style.transform = 'translateY(30px)';
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(el);
+        });
+        
+        // Log registration button clicks
+        document.querySelectorAll('.btn-linkedin, .btn-meetup').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const platform = this.classList.contains('btn-linkedin') ? 'LinkedIn' : 'Meetup';
+                const href = this.getAttribute('href');
+                Logger.info('Registration button clicked', { platform: platform, url: href });
+            });
+        });
+        
+        // Log when logger is ready
+        Logger.info('Event site initialized', {
+            viewportWidth: window.innerWidth,
+            viewportHeight: window.innerHeight,
+            devicePixelRatio: window.devicePixelRatio
         });
     </script>
 </body>
