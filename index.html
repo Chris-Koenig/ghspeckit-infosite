@@ -1156,8 +1156,10 @@
             
             // Make ScrollLogger accessible from console for debugging
             window.ScrollLogger = ScrollLogger;
-            console.log('[ScrollLogger] Access logger via window.ScrollLogger');
-            console.log('[ScrollLogger] Available methods: getLogs(), getAnalytics(), clearLogs()');
+            if (ScrollLogger.config.debugMode) {
+                console.log('[ScrollLogger] Access logger via window.ScrollLogger');
+                console.log('[ScrollLogger] Available methods: getLogs(), getAnalytics(), clearLogs()');
+            }
         });
 
         // Mobile navigation toggle
