@@ -911,7 +911,10 @@
                         if (logs.length > 100) logs.shift();
                         sessionStorage.setItem('appLogs', JSON.stringify(logs));
                     } catch (e) {
-                        console.warn('Failed to store log in sessionStorage:', e);
+                        // Avoid infinite loop - use direct console method
+                        if (level !== 'WARN') {
+                            console.warn('Failed to store log in sessionStorage:', e);
+                        }
                     }
                 }
             },
@@ -957,9 +960,16 @@
         
         // Page lifecycle logging
         window.addEventListener('load', function() {
-            Logger.info('Page fully loaded', {
-                loadTime: performance.timing.loadEventEnd - performance.timing.navigationStart
-            });
+            try {
+                // Use modern Performance API
+                const perfEntries = performance.getEntriesByType('navigation');
+                const loadTime = perfEntries.length > 0 
+                    ? Math.round(perfEntries[0].loadEventEnd - perfEntries[0].fetchStart)
+                    : 0;
+                Logger.info('Page fully loaded', { loadTime: loadTime });
+            } catch (e) {
+                Logger.info('Page fully loaded');
+            }
         });
         
         window.addEventListener('beforeunload', function() {
@@ -1030,12 +1040,17 @@
 
         // Navbar scroll effect
         let scrollLogged = false;
+        let scrollTimeout;
         window.addEventListener('scroll', function() {
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
+                // Throttle logging
                 if (!scrollLogged) {
-                    Logger.debug('User scrolled past header');
                     scrollLogged = true;
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(function() {
+                        Logger.debug('User scrolled past header');
+                    }, 100);
                 }
             } else {
                 navbar.classList.remove('scrolled');
