@@ -730,7 +730,7 @@
     </section>
 
     <!-- Event Cards Section -->
-    <section class="topic-section">
+    <section class="topic-section" id="topics">
         <div class="container">
             <h2 class="section-title">What You'll learn</h2>
             
@@ -801,7 +801,7 @@
     </section>
 
     <!-- Why SpecKit Now Section -->
-    <section class="why-speckit-section">
+    <section class="why-speckit-section" id="why">
         <div class="container">
             <div class="why-header">
                 <h2 class="section-title-large">Why SpecKit Now</h2>
@@ -870,6 +870,7 @@
                 throttleDelay: 100, // ms between scroll event processing
                 storageKey: 'scrollBehaviorLogs',
                 maxLogs: 500, // Maximum number of log entries to keep
+                debugMode: false, // Set to true to enable verbose console logging
             },
             
             // State tracking
@@ -942,6 +943,12 @@
                     direction = 'up';
                 }
                 
+                // Calculate percentage scrolled (avoid division by zero)
+                const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                const percentScrolled = maxScroll > 0 
+                    ? Math.round((currentScrollY / maxScroll) * 100) 
+                    : 0;
+                
                 // Log scroll event
                 this.logEvent('scroll', {
                     scrollY: Math.round(currentScrollY),
@@ -949,7 +956,7 @@
                     speed: Math.round(scrollSpeed),
                     delta: Math.round(scrollDelta),
                     timestamp: new Date().toISOString(),
-                    percentScrolled: Math.round((currentScrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100)
+                    percentScrolled: percentScrolled
                 });
                 
                 // Update state
@@ -1012,8 +1019,10 @@
                     this.state.logs = this.state.logs.slice(-this.config.maxLogs);
                 }
                 
-                // Console log for debugging
-                console.log(`[ScrollLogger] ${type}:`, data);
+                // Console log for debugging (only in debug mode or for non-scroll events)
+                if (this.config.debugMode || type !== 'scroll') {
+                    console.log(`[ScrollLogger] ${type}:`, data);
+                }
                 
                 // Periodically save to session storage
                 if (this.state.logs.length % 10 === 0) {
