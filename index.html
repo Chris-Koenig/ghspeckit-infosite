@@ -614,6 +614,16 @@
     </style>
 </head>
 <body>
+    <!-- Shared SVG definitions for reuse -->
+    <svg width="0" height="0" style="position: absolute;">
+        <defs>
+            <linearGradient id="isoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#0077b5;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#4fc3f7;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    </svg>
+    
     <!-- Navigation -->
         <!-- Navigation -->
     <nav class="navbar" id="navbar">
@@ -690,14 +700,8 @@
                     </h3>
                     <p>
                         <svg width="100" height="30" viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 0.5rem;">
-                            <defs>
-                                <linearGradient id="isoGradientCard" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#0077b5;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#4fc3f7;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="12" cy="9" r="2.5" fill="url(#isoGradientCard)"/>
-                            <rect x="9.5" y="13.5" width="5" height="11" rx="1" fill="url(#isoGradientCard)"/>
+                            <circle cx="12" cy="9" r="2.5" fill="url(#isoGradient)"/>
+                            <rect x="9.5" y="13.5" width="5" height="11" rx="1" fill="url(#isoGradient)"/>
                             <text x="22" y="20" font-family="'Segoe UI', Arial, sans-serif" font-size="13" font-weight="300" fill="#333">solutions</text>
                         </svg>
                         <br>
@@ -872,12 +876,6 @@
             <div style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; gap: 1rem;">
                 <span style="color: #666; font-size: 0.9rem;">Hosted by</span>
                 <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="isoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#0077b5;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#4fc3f7;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
                     <!-- "i" symbol with a modern look -->
                     <circle cx="15" cy="12" r="3" fill="url(#isoGradient)"/>
                     <rect x="12" y="18" width="6" height="14" rx="1" fill="url(#isoGradient)"/>
