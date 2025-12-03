@@ -863,8 +863,252 @@
     </footer>
 
     <script>
+        // ===== SCROLL BEHAVIOR LOGGING SYSTEM =====
+        const ScrollLogger = {
+            // Configuration
+            config: {
+                throttleDelay: 100, // ms between scroll event processing
+                storageKey: 'scrollBehaviorLogs',
+                maxLogs: 500, // Maximum number of log entries to keep
+            },
+            
+            // State tracking
+            state: {
+                lastScrollY: 0,
+                lastScrollTime: Date.now(),
+                sessionStartTime: Date.now(),
+                currentSection: null,
+                sectionStartTime: null,
+                logs: [],
+            },
+            
+            // Initialize the scroll logger
+            init() {
+                console.log('[ScrollLogger] Initializing scroll behavior tracking...');
+                
+                // Load existing logs from session storage
+                this.loadLogs();
+                
+                // Log session start
+                this.logEvent('session_start', {
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    screenSize: `${window.innerWidth}x${window.innerHeight}`,
+                    pageUrl: window.location.href
+                });
+                
+                // Set up scroll event listener with throttling
+                let scrollTimeout;
+                window.addEventListener('scroll', () => {
+                    if (scrollTimeout) {
+                        clearTimeout(scrollTimeout);
+                    }
+                    scrollTimeout = setTimeout(() => {
+                        this.handleScroll();
+                    }, this.config.throttleDelay);
+                });
+                
+                // Set up section visibility tracking
+                this.setupSectionTracking();
+                
+                // Log when user leaves the page
+                window.addEventListener('beforeunload', () => {
+                    this.logEvent('session_end', {
+                        timestamp: new Date().toISOString(),
+                        duration: Date.now() - this.state.sessionStartTime,
+                        totalScrollEvents: this.state.logs.filter(l => l.type === 'scroll').length
+                    });
+                    this.saveLogs();
+                });
+                
+                console.log('[ScrollLogger] Scroll tracking initialized successfully');
+            },
+            
+            // Handle scroll events
+            handleScroll() {
+                const currentScrollY = window.scrollY;
+                const currentTime = Date.now();
+                const timeDelta = currentTime - this.state.lastScrollTime;
+                const scrollDelta = currentScrollY - this.state.lastScrollY;
+                
+                // Calculate scroll speed (pixels per second)
+                const scrollSpeed = timeDelta > 0 ? Math.abs(scrollDelta / timeDelta * 1000) : 0;
+                
+                // Determine scroll direction
+                let direction = 'none';
+                if (scrollDelta > 0) {
+                    direction = 'down';
+                } else if (scrollDelta < 0) {
+                    direction = 'up';
+                }
+                
+                // Log scroll event
+                this.logEvent('scroll', {
+                    scrollY: Math.round(currentScrollY),
+                    direction: direction,
+                    speed: Math.round(scrollSpeed),
+                    delta: Math.round(scrollDelta),
+                    timestamp: new Date().toISOString(),
+                    percentScrolled: Math.round((currentScrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100)
+                });
+                
+                // Update state
+                this.state.lastScrollY = currentScrollY;
+                this.state.lastScrollTime = currentTime;
+            },
+            
+            // Set up section visibility tracking
+            setupSectionTracking() {
+                const sections = document.querySelectorAll('section[id], .hero[id]');
+                
+                const observerOptions = {
+                    threshold: 0.5, // Section is considered visible when 50% is in viewport
+                    rootMargin: '0px'
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                            const sectionId = entry.target.id || 'unknown';
+                            
+                            // Log section exit if there was a previous section
+                            if (this.state.currentSection && this.state.currentSection !== sectionId) {
+                                const timeInSection = Date.now() - this.state.sectionStartTime;
+                                this.logEvent('section_exit', {
+                                    section: this.state.currentSection,
+                                    duration: timeInSection,
+                                    timestamp: new Date().toISOString()
+                                });
+                            }
+                            
+                            // Log section entry
+                            this.logEvent('section_enter', {
+                                section: sectionId,
+                                scrollY: Math.round(window.scrollY),
+                                timestamp: new Date().toISOString()
+                            });
+                            
+                            this.state.currentSection = sectionId;
+                            this.state.sectionStartTime = Date.now();
+                        }
+                    });
+                }, observerOptions);
+                
+                sections.forEach(section => observer.observe(section));
+            },
+            
+            // Log an event
+            logEvent(type, data) {
+                const logEntry = {
+                    type: type,
+                    data: data,
+                    sessionTime: Date.now() - this.state.sessionStartTime
+                };
+                
+                this.state.logs.push(logEntry);
+                
+                // Keep only the last N logs to prevent memory issues
+                if (this.state.logs.length > this.config.maxLogs) {
+                    this.state.logs = this.state.logs.slice(-this.config.maxLogs);
+                }
+                
+                // Console log for debugging
+                console.log(`[ScrollLogger] ${type}:`, data);
+                
+                // Periodically save to session storage
+                if (this.state.logs.length % 10 === 0) {
+                    this.saveLogs();
+                }
+            },
+            
+            // Save logs to session storage
+            saveLogs() {
+                try {
+                    sessionStorage.setItem(this.config.storageKey, JSON.stringify(this.state.logs));
+                    console.log(`[ScrollLogger] Saved ${this.state.logs.length} log entries`);
+                } catch (e) {
+                    console.error('[ScrollLogger] Failed to save logs:', e);
+                }
+            },
+            
+            // Load logs from session storage
+            loadLogs() {
+                try {
+                    const savedLogs = sessionStorage.getItem(this.config.storageKey);
+                    if (savedLogs) {
+                        this.state.logs = JSON.parse(savedLogs);
+                        console.log(`[ScrollLogger] Loaded ${this.state.logs.length} log entries from previous session`);
+                    }
+                } catch (e) {
+                    console.error('[ScrollLogger] Failed to load logs:', e);
+                    this.state.logs = [];
+                }
+            },
+            
+            // Get logs (useful for debugging or analytics)
+            getLogs() {
+                return this.state.logs;
+            },
+            
+            // Clear all logs
+            clearLogs() {
+                this.state.logs = [];
+                sessionStorage.removeItem(this.config.storageKey);
+                console.log('[ScrollLogger] All logs cleared');
+            },
+            
+            // Get analytics summary
+            getAnalytics() {
+                const analytics = {
+                    totalScrollEvents: this.state.logs.filter(l => l.type === 'scroll').length,
+                    totalSessionTime: Date.now() - this.state.sessionStartTime,
+                    sections: {},
+                    scrollDirection: {
+                        up: 0,
+                        down: 0
+                    },
+                    averageScrollSpeed: 0
+                };
+                
+                // Analyze scroll events
+                const scrollEvents = this.state.logs.filter(l => l.type === 'scroll');
+                let totalSpeed = 0;
+                
+                scrollEvents.forEach(log => {
+                    if (log.data.direction === 'up') analytics.scrollDirection.up++;
+                    if (log.data.direction === 'down') analytics.scrollDirection.down++;
+                    totalSpeed += log.data.speed || 0;
+                });
+                
+                analytics.averageScrollSpeed = scrollEvents.length > 0 
+                    ? Math.round(totalSpeed / scrollEvents.length) 
+                    : 0;
+                
+                // Analyze section visits
+                this.state.logs.forEach(log => {
+                    if (log.type === 'section_enter') {
+                        const section = log.data.section;
+                        if (!analytics.sections[section]) {
+                            analytics.sections[section] = { visits: 0, totalTime: 0 };
+                        }
+                        analytics.sections[section].visits++;
+                    } else if (log.type === 'section_exit') {
+                        const section = log.data.section;
+                        if (analytics.sections[section]) {
+                            analytics.sections[section].totalTime += log.data.duration || 0;
+                        }
+                    }
+                });
+                
+                return analytics;
+            }
+        };
+        
         // Enhanced title animation
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize scroll logger
+            ScrollLogger.init();
+            
             const title = document.getElementById('main-title');
             
             // Split text into individual characters for more dramatic effect
@@ -900,6 +1144,11 @@
                 }
             `;
             document.head.appendChild(style);
+            
+            // Make ScrollLogger accessible from console for debugging
+            window.ScrollLogger = ScrollLogger;
+            console.log('[ScrollLogger] Access logger via window.ScrollLogger');
+            console.log('[ScrollLogger] Available methods: getLogs(), getAnalytics(), clearLogs()');
         });
 
         // Mobile navigation toggle
